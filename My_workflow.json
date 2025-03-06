@@ -1,0 +1,171 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Crane calculator",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Radius",
+              "fieldType": "=number",
+              "placeholder": "in meters",
+              "fieldOptions": {
+                "values": [
+                  {}
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Load",
+              "fieldType": "number",
+              "placeholder": "in tons, 0.4 tons of hook weight will be added automatically",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0aee21ea-eaa6-45e8-a34e-7912e702b6b6",
+      "name": "On form submission",
+      "webhookId": "d0a09f2f-33b9-403b-8b07-261327f12f98"
+    },
+    {
+      "parameters": {
+        "jsCode": "const radius = Math.abs($input.first().json.Radius);\nconst load = Math.abs($input.first().json.Load) + 0.4;\nconst boomLength = radius * (1 + load / 10);\nconst boomAngleRad = Math.acos(radius / boomLength);\nconst boomAngleDeg = boomAngleRad * (180 / Math.PI);\nreturn { boomLength, boomAngleRad, boomAngleDeg };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "20f753ea-fa5a-47db-a429-e4f10f6aad1f",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.0.249:5000/plot_crane",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=boomLength",
+              "value": "={{ $json.boomLength }}"
+            },
+            {
+              "name": "boomAngleRad",
+              "value": "={{ $json.boomAngleRad }}"
+            },
+            {
+              "name": "boomAngleDeg",
+              "value": "={{ $json.boomAngleDeg }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "fdf02774-9db2-466a-884a-0ed70631847d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "image",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        -180
+      ],
+      "id": "b4a0ffe9-5711-4199-8c51-9b2df93b315a",
+      "name": "Convert to File",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "showText",
+        "responseText": "={{ $json.image }}"
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        680,
+        0
+      ],
+      "id": "34364f2a-854f-4787-922c-9fa3558093ee",
+      "name": "Form",
+      "webhookId": "7bf7deb7-faac-4875-99c0-a338cdd27521"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b70dd50e-152e-4310-bdb1-9b493c5ed172",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c89c020d696ff273bb4a3e50ada8dff74477a00d47906eaff67c4de2ba70e9b3"
+  },
+  "id": "07IE7tWEuJzEXp1Y",
+  "tags": []
+}
