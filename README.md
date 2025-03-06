@@ -25,3 +25,11 @@ Flask, numpy, matplotlib
 ![image](https://github.com/user-attachments/assets/3053369a-37fb-4920-98a9-07b7473e6e82)
 
 ![image](https://github.com/user-attachments/assets/0d185e9d-382a-49ae-8b02-b28dedb7f71b)
+
+* Note: Use the following code in the code block before the POST request:
+  `const radius = Math.abs($input.first().json.Radius);
+const load = Math.abs($input.first().json.Load) + 0.4;
+const boomLength = radius * (1 + load / 10);
+const boomAngleRad = Math.acos(radius / boomLength);
+const boomAngleDeg = boomAngleRad * (180 / Math.PI);
+return { boomLength, boomAngleRad, boomAngleDeg };`
