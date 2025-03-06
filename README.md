@@ -19,8 +19,12 @@ Flask, numpy, matplotlib
 * Note: Replace localhost with 192.xxx.xxx.xxx ip address depending on the log. Example:
   ![image](https://github.com/user-attachments/assets/4bc954d3-aa1b-4bed-8315-4a41e5a3974f)
 
+* Sample response (after decoding the base64 string):
+  ![image](https://github.com/user-attachments/assets/bdfd34ca-393b-4512-b4a2-5964e808e05b)
 
 ## Integration with n8n
+
+* Refer to `My_workflow.json` for the n8n workflow. After deploying the Python Flask server and importing the n8n json, the workflow should be functioning properly.
 
 ![image](https://github.com/user-attachments/assets/3053369a-37fb-4920-98a9-07b7473e6e82)
 
